@@ -3,18 +3,24 @@ import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const port = Number(process.env.PORT || 5173);
+// Đọc khoá bí mật (OPENAI_API_KEY…) từ .env khi chạy ở máy; trên Vercel biến lấy từ Settings của project.
+try { process.loadEnvFile(path.join(root, ".env")); } catch { /* không có .env thì bỏ qua */ }
+// Cùng một file API chạy trên Vercel và ở máy, để thử sổ lưu bút trước khi đẩy lên.
+const wishesApi = createRequire(import.meta.url)("./api/wishes.js");
 const mime = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json", ".webp": "image/webp", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".ttf": "font/ttf", ".woff2": "font/woff2", ".mp3": "audio/mpeg", ".wav": "audio/wav" };
 
 http.createServer(async (request, response) => {
   try {
-    if (!["GET", "HEAD"].includes(request.method)) { response.writeHead(405).end(); return; }
     const pathname = decodeURIComponent(new URL(request.url, "http://localhost").pathname);
+    if (pathname === "/api/wishes") { await wishesApi(request, response); return; }
+    if (!["GET", "HEAD"].includes(request.method)) { response.writeHead(405).end(); return; }
     const file = path.resolve(root, `.${pathname === "/" ? "/index.html" : pathname}`);
     const relative = path.relative(root, file);
-    if (relative.startsWith("..") || path.isAbsolute(relative) || relative.split(/[\\/]/).some(segment => segment.startsWith("."))) { response.writeHead(403).end(); return; }
+    if (relative.startsWith("..") || path.isAbsolute(relative) || relative.split(/[\\/]/).some(segment => segment.startsWith(".")) || /^(data|api)([\\/]|$)/.test(relative)) { response.writeHead(403).end(); return; }
     const info = await stat(file);
     if (!info.isFile()) { response.writeHead(404).end(); return; }
     const headers = { "Content-Type": mime[path.extname(file)] || "application/octet-stream", "Accept-Ranges": "bytes", "Cache-Control": "no-cache" };

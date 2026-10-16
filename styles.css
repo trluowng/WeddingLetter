@@ -23,7 +23,7 @@ h2{font-size:20px;line-height:1.4;text-transform:uppercase;font-weight:700;lette
 .sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 /* The opening card is a separate layer, so the transition never reloads the page. */
-.opening{position:fixed;inset:0;z-index:100;display:grid;place-items:center;overflow:hidden;background:linear-gradient(to bottom right,#6e1a20,#511419,#380a0e);transition:opacity .66s ease}
+.opening{position:fixed;inset:0;z-index:100;display:grid;place-items:center;overflow:hidden;background:linear-gradient(to bottom right,#6e1a20,#511419,#380a0e);transition:opacity calc(.66s * var(--opening-scale,1)) ease}
 .opening.is-revealing{opacity:0;pointer-events:none}
 .opening-petals{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;perspective:900px}
 .rose-petal{position:absolute;top:-80px;width:var(--petal-size);height:calc(var(--petal-size) * 1.12);opacity:0;animation:rose-petal-fall var(--petal-duration) linear var(--petal-delay) infinite;will-change:transform,opacity}
@@ -36,9 +36,9 @@ h2{font-size:20px;line-height:1.4;text-transform:uppercase;font-weight:700;lette
 .petal-depth-5{filter:blur(2px);opacity:.62}
 .invitation-cover{position:relative;z-index:1;width:310px;max-width:calc(100vw - 32px);border-radius:8px;box-shadow:0 25px 60px -12px #0007,0 8px 24px #0003,0 0 40px #51141926}
 /* Chuỗi mở theo trang gốc: niêm vỡ → cánh hoa bắn toả → phong bì bay lên. */
-.is-breaking .wax-seal{animation:seal-break .6s cubic-bezier(.4,0,.2,1) forwards}
+.is-breaking .wax-seal{animation:seal-break calc(.6s * var(--opening-scale,1)) cubic-bezier(.4,0,.2,1) forwards}
 .is-breaking .open-button,.is-flying .open-button{pointer-events:none}
-.is-flying .invitation-cover{animation:envelope-away .96s ease-in forwards}
+.is-flying .invitation-cover{animation:envelope-away calc(.96s * var(--opening-scale,1)) ease-in forwards}
 .is-entering .hero{animation:invitation-enter 1s cubic-bezier(.2,.65,.3,1) both}
 .opening-effects{position:absolute;inset:0;z-index:3;pointer-events:none;--origin-x:50vw;--origin-y:55vh}
 .opening-halo,.opening-core,.opening-bloom,.burst-particle{position:absolute;left:var(--origin-x);top:var(--origin-y);opacity:0}
@@ -49,11 +49,11 @@ h2{font-size:20px;line-height:1.4;text-transform:uppercase;font-weight:700;lette
 .bloom-right{--bloom-x:clamp(140px,28vw,350px);--bloom-rotation:22deg}
 .opening-bloom img{width:100%}
 .bloom-right img{transform:scaleX(-1)}
-.petal-burst{position:absolute;left:var(--origin-x);top:var(--origin-y);width:var(--size);height:calc(var(--size) * 1.12);opacity:0;will-change:transform,opacity;animation:particle-burst 1.68s cubic-bezier(.25,.46,.45,.94) var(--delay) forwards}
+.petal-burst{position:absolute;left:var(--origin-x);top:var(--origin-y);width:var(--size);height:calc(var(--size) * 1.12);opacity:0;will-change:transform,opacity;animation:particle-burst calc(1.68s * var(--opening-scale,1)) cubic-bezier(.25,.46,.45,.94) var(--delay) forwards}
 .petal-burst>svg{display:block;width:100%;height:100%;overflow:visible;fill:currentColor;filter:drop-shadow(0 2px 3px #5114191a)}
 .petal-burst.is-bokeh{border-radius:50%;background:#f3e8de99;filter:blur(6px)}
-.seal-ring{position:absolute;left:var(--origin-x);top:var(--origin-y);width:54px;height:54px;border-radius:50%;border:3px solid var(--wine);opacity:0;will-change:transform,opacity;animation:seal-ring .72s ease-out forwards}
-.flower-fly{position:absolute;z-index:4;pointer-events:none;object-fit:contain;transform-origin:center;opacity:0;will-change:transform,opacity,filter;animation:flower-fly-away 1.44s ease-in forwards}
+.seal-ring{position:absolute;left:var(--origin-x);top:var(--origin-y);width:54px;height:54px;border-radius:50%;border:3px solid var(--wine);opacity:0;will-change:transform,opacity;animation:seal-ring calc(.72s * var(--opening-scale,1)) ease-out forwards}
+.flower-fly{position:absolute;z-index:4;pointer-events:none;object-fit:contain;transform-origin:center;opacity:0;will-change:transform,opacity,filter;animation:flower-fly-away calc(1.44s * var(--opening-scale,1)) ease-in forwards}
 .cover-paper{position:absolute;inset:0;overflow:hidden;border-radius:8px;background:rgba(255,250,243,.96);border:1px solid #51141926}
 .cover-flower{position:absolute;height:144px;width:auto;max-width:none;opacity:.8;pointer-events:none}
 .cover-flower-left{top:-5%;left:-10px;transform:translateX(-6%) rotate(25deg)}
@@ -137,7 +137,7 @@ h2{font-size:20px;line-height:1.4;text-transform:uppercase;font-weight:700;lette
 
 .reception-section{margin-bottom:16px}
 .reception-flower{left:-18%;top:10%;width:24%;animation-delay:.3s;animation-duration:6s}
-.reception-card{display:flex;flex-direction:column;align-items:center;gap:16px}
+.reception-card{display:flex;flex-direction:column;align-items:center;gap:16px;padding:64px 20px 96px}
 .reception-card h2{margin-bottom:8px}
 .reception-intro{font-size:20px;font-weight:400;text-transform:uppercase}
 .reception-times{display:flex;justify-content:center;gap:32px;margin-top:16px}
@@ -205,11 +205,17 @@ input::placeholder,textarea::placeholder{color:#51141999}
 .wish p{margin-top:8px;line-height:1.625;overflow-wrap:anywhere;white-space:pre-wrap}
 .wish strong{overflow-wrap:anywhere}
 .wish-new{animation:reveal-in .5s ease both}
+.wishes-note{padding:24px 16px;border:1px dashed #51141944;border-radius:8px;text-align:center;font-size:14px;color:#511419b3}
+.hp-field{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 .gift-section{position:relative;isolation:isolate;text-align:center;padding:32px 24px 40px}
 .gift-castle{width:155%;top:6%}
-.gift-envelope{position:relative;width:250px;height:357px;max-width:100%;display:block;margin:16px auto 0;background:none;padding:0}
-.gift-envelope>img{width:190px;height:275px;object-fit:contain;margin:auto;animation:float 4s ease-in-out infinite;filter:drop-shadow(0 10px 6px #0002);transition:transform .4s}
-.gift-envelope:hover>img{transform:rotate(-5deg) translateY(-10px)}
+.gift-envelope{position:relative;width:300px;height:330px;max-width:100%;display:block;margin:16px auto 0;background:none;padding:0}
+/* Hai phong bì: cái lớn nghiêng trái phía trước, cái nhỏ nghiêng phải bên cạnh. */
+.gift-card{position:absolute;object-fit:contain;filter:drop-shadow(0 10px 6px #0002);animation:float 4s ease-in-out infinite;transition:transform .4s}
+.gift-card-main{left:0;top:18px;width:190px;height:275px;z-index:1}
+.gift-card-side{right:8px;top:56px;width:150px;height:217px;z-index:2;transform:rotate(32deg);animation-delay:-2s}
+.gift-envelope:hover .gift-card-main{transform:rotate(-5deg) translateY(-10px)}
+.gift-envelope:hover .gift-card-side{transform:rotate(37deg) translateY(-10px)}
 .gift-hint{position:absolute;bottom:8px;left:0;right:0;font-size:12px;color:#511419b3}
 .sparkle{position:absolute;color:#b58b2f;animation:sparkle 2.5s ease-in-out infinite}
 .s1{left:12%;top:6%;font-size:21px}.s2{right:8%;top:14%;font-size:15px;animation-delay:.8s}.s3{left:3%;top:34%;font-size:13px;animation-delay:1.6s}
@@ -282,12 +288,13 @@ dialog[open]{animation:reveal-in .3s ease both}
 @keyframes flower-bloom{0%{opacity:0;transform:translate(-50%,-65%) scale(.75)}40%{opacity:.22}65%{opacity:.17}100%{opacity:0;transform:translate(calc(-50% + var(--bloom-x)),-90%) rotate(var(--bloom-rotation)) scale(1.1)}}
 @keyframes invitation-enter{from{opacity:.25;transform:translateY(25px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 
+@media(max-width:767px){.cover-flower{height:168px}.reception-flower{left:calc(-22% + 8px);top:calc(10% + 28px);width:37.5%}}
 @media(min-width:640px){.invitation-cover{width:340px}.cover-content h1{font-size:36px}.cover-ampersand{font-size:20px}.open-button{font-weight:500}}
 @media(min-width:768px){
   .invitation-cover{width:520px}.cover-content{padding-top:96px;padding-bottom:32px}.cover-flower{height:280px}.cover-flower-left{top:-2%;transform:translateX(-11%) rotate(25deg)}.cover-flower-right{bottom:35%;transform:translateX(11%) scaleX(-1) rotate(25deg)}
   .wedding{max-width:900px;border:1px solid #51141922}.save-the-date{font-size:18px}.envelope-art{max-width:420px;margin-top:112px}.couple-names{margin-top:80px;font-size:58px}.couple-names>span{font-size:120px}
   .card-section{max-width:560px}.families{gap:32px}.announcement{font-size:13px}.formal-names{gap:16px}.formal-names h3{font-size:43px}.ceremony-details{gap:20px}.ceremony-place{font-size:18px}.time-line{font-size:15px}.date-day{font-size:46px}.date-display>div{font-size:18px}.lunar-date{font-size:14px}
-  .album{max-width:600px}.photo-stage{height:520px}.album-arrow{display:flex}.reception-card{gap:20px}.reception-intro{font-size:26px}.reception-times strong{font-size:20px}.calendar{width:362px}.calendar-weekdays>span{font-size:11px}.calendar-days>span{height:34px;font-size:12px}
+  .album{max-width:600px}.photo-stage{height:520px}.album-arrow{display:flex}.reception-card{gap:20px;padding-top:88px}.reception-intro{font-size:26px}.reception-times strong{font-size:20px}.calendar{width:362px}.calendar-weekdays>span{font-size:11px}.calendar-days>span{height:34px;font-size:12px}
   .venue-section h2{font-size:20px}.venue-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.venue-card{min-height:190px}.venue-card>p{font-size:16px}
   .timeline{gap:40px}.timeline li{gap:32px}.timeline time{font-size:17px}.timeline li>span{font-size:15px}.timeline li:not(:last-child)>i::after{height:70px}
   .guestbook-section{padding-top:120px}.guestbook-paper{top:-30px}.guestbook-write{max-width:380px}#wish-form textarea{height:110px}.wishes{margin-top:110px}

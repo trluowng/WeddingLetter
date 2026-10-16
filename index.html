@@ -8,10 +8,10 @@
   <title>Trọng Dũng & Thu Cúc — Thiệp cưới</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/ViaodaLibre-Regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=venue-1">
+  <link rel="stylesheet" href="styles.css?v=wishes-1">
   <script src="config.js" defer></script>
-  <script src="opening.js?v=venue-1" defer></script>
-  <script src="app.js?v=venue-1" defer></script>
+  <script src="opening.js?v=opening-2" defer></script>
+  <script src="app.js?v=wishes-1" defer></script>
 </head>
 <body class="is-closed">
   <div class="opening" id="opening">
@@ -94,7 +94,7 @@
     </section>
 
     <section class="card-section reception-section reveal" aria-labelledby="reception-title">
-      <img class="flower reception-flower" src="assets/images/flower2-decoration.webp" alt="" loading="lazy">
+      <img class="flower reception-flower" src="assets/images/flower2-decoration.webp" alt="" aria-hidden="true" loading="lazy">
       <div class="burgundy-card reception-card">
         <h2 id="reception-title">Thông tin tiệc cưới</h2>
         <h3 class="reception-intro">Tiệc cưới sẽ diễn ra vào lúc:</h3>
@@ -140,7 +140,7 @@
     <section class="guestbook-section reveal" aria-labelledby="guestbook-title">
       <div class="guestbook-paper"><img src="assets/images/papernote-background.webp" alt="" loading="lazy"></div>
       <div class="guestbook-write"><h2 id="guestbook-title">Sổ lưu bút</h2>
-        <form id="wish-form"><label class="sr-only" for="wish-name">Tên của bạn</label><input id="wish-name" name="name" placeholder="Nhập tên*" maxlength="80" required autocomplete="name"><label class="sr-only" for="wish-message">Lời chúc</label><textarea id="wish-message" name="message" placeholder="Nhập lời chúc*" maxlength="2000" rows="3" required></textarea><div class="wish-actions"><button class="suggest-wish" id="suggest-wish" type="button" title="Gợi ý lời chúc" aria-label="Gợi ý lời chúc">🪄</button><button class="burgundy-button" type="submit">Gửi lời chúc</button></div></form>
+        <form id="wish-form"><input class="hp-field" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"><label class="sr-only" for="wish-name">Tên của bạn</label><input id="wish-name" name="name" placeholder="Nhập tên*" maxlength="80" required autocomplete="name"><label class="sr-only" for="wish-message">Lời chúc</label><textarea id="wish-message" name="message" placeholder="Nhập lời chúc*" maxlength="2000" rows="3" required></textarea><div class="wish-actions"><button class="suggest-wish" id="suggest-wish" type="button" title="Gợi ý lời chúc" aria-label="Gợi ý lời chúc">🪄</button><button class="burgundy-button" type="submit">Gửi lời chúc</button></div></form>
       </div>
       <div class="wishes" id="wishes" aria-label="Những lời chúc mừng"></div>
     </section>
@@ -148,7 +148,7 @@
     <section class="gift-section reveal" aria-labelledby="gift-title">
       <img class="castle gift-castle" src="assets/images/castle-background.webp" alt="" loading="lazy">
       <h2 id="gift-title">Hộp quà mừng</h2>
-      <button class="gift-envelope" data-dialog="gift-dialog" type="button" aria-label="Mở hộp quà mừng"><span class="sparkle s1">✦</span><span class="sparkle s2">✦</span><span class="sparkle s3">✦</span><img src="assets/images/gift-envelope.webp" alt="Phong bì mừng cưới" loading="lazy"><span class="gift-hint">Nhấn để mở</span></button>
+      <button class="gift-envelope" data-dialog="gift-dialog" type="button" aria-label="Mở hộp quà mừng"><span class="sparkle s1">✦</span><span class="sparkle s2">✦</span><span class="sparkle s3">✦</span><img class="gift-card gift-card-main" src="assets/images/gift-envelope.webp" alt="Phong bì mừng cưới" loading="lazy"><img class="gift-card gift-card-side" src="assets/images/gift-envelope.webp" alt="" loading="lazy"><span class="gift-hint">Nhấn để mở</span></button>
     </section>
     <footer><p>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</p><span class="footer-heart" aria-hidden="true">♡</span></footer>
   </main>

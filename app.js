@@ -57,6 +57,31 @@
     link.setAttribute("aria-label", `Chỉ đường tới ${link.dataset.mapLabel}: ${address}`);
   });
 
+  // Tự cuộn nhẹ sau khi mở thiệp. Khách chạm/cuộn/gõ phím thì dừng, để yên vài giây thì cuộn tiếp.
+  const autoScroll = { speed: 140 / 3, resumeDelay: 6000, pausedUntil: 0, position: 0, last: 0, running: false };
+  function pauseAutoScroll() { autoScroll.pausedUntil = performance.now() + autoScroll.resumeDelay; }
+  for (const type of ["wheel", "touchstart", "pointerdown", "keydown"]) window.addEventListener(type, pauseAutoScroll, { passive: true });
+  function autoScrollStep(now) {
+    const elapsed = autoScroll.last ? Math.min(now - autoScroll.last, 100) : 0;
+    autoScroll.last = now;
+    const maxY = document.documentElement.scrollHeight - innerHeight;
+    // Khách tự kéo thanh cuộn hoặc bấm "về đầu trang": tiếp tục từ vị trí mới.
+    if (Math.abs(window.scrollY - autoScroll.position) > 2) autoScroll.position = window.scrollY;
+    const busy = document.hidden || $("dialog[open]") || document.activeElement?.matches("input, textarea, select");
+    if (now >= autoScroll.pausedUntil && !busy && autoScroll.position < maxY - 1) {
+      autoScroll.position = Math.min(maxY, autoScroll.position + autoScroll.speed * elapsed / 1000);
+      window.scrollTo({ top: autoScroll.position, behavior: "instant" });
+    }
+    requestAnimationFrame(autoScrollStep);
+  }
+  function startAutoScroll() {
+    if (autoScroll.running || reducedMotion.matches) return;
+    autoScroll.running = true;
+    autoScroll.position = window.scrollY;
+    autoScroll.pausedUntil = performance.now() + 500;
+    requestAnimationFrame(autoScrollStep);
+  }
+
   const revealObserver = new IntersectionObserver(entries => {
     for (const entry of entries) {
       if (entry.isIntersecting && isOpen) {
@@ -72,6 +97,7 @@
     isOpen = true;
     document.body.classList.add("motion-ready");
     $$(".reveal").forEach(element => revealObserver.observe(element));
+    startAutoScroll();
   }
   document.addEventListener("invitation:opened", activateInvitation);
   // Khi vào bằng ?open=1, opening.js mở ngay lúc tải (trước app.js), nên kích hoạt trực tiếp.
@@ -261,50 +287,82 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
 
-  const sampleWishes = [
-    ["Duy Khang", "Chúc mừng ngày vui của hai bạn, trăm năm hạnh phúc bền lâu!"],
-    ["Lan Chi", "Đẹp đôi quá! Chúc hai bạn sống bên nhau đầu bạc răng long."],
-    ["Tuấn Anh", "Mừng hạnh phúc hai bạn! Chúc gia đình nhỏ luôn đầy ắp tiếng cười."],
-    ["Khánh Vy", "Chúc cô dâu chú rể luôn giữ được nụ cười này mãi mãi nhé!"],
-    ["Gia Bảo", "Nhìn thiệp là thấy tình yêu rồi. Chúc hai bạn trăm năm viên mãn!"],
-    ["Phương Anh", "Chúc đám cưới thật trọn vẹn và ấm áp. Hạnh phúc nhé hai bạn!"],
-    ["Minh Đức", "Cuối cùng cũng tới ngày trọng đại, chúc mừng cặp đôi xứng lứa vừa đôi!"],
-    ["Thu Hà", "Chúc hai bạn mãi mãi yêu thương và bên nhau trọn đời!"],
+  // Câu gợi ý cho nút 🪄, không hiển thị như lời chúc.
+  const wishSuggestions = [
+    "Chúc mừng ngày vui của hai bạn, trăm năm hạnh phúc bền lâu!",
+    "Đẹp đôi quá! Chúc hai bạn sống bên nhau đầu bạc răng long.",
+    "Mừng hạnh phúc hai bạn! Chúc gia đình nhỏ luôn đầy ắp tiếng cười.",
+    "Chúc cô dâu chú rể luôn giữ được nụ cười này mãi mãi nhé!",
+    "Nhìn thiệp là thấy tình yêu rồi. Chúc hai bạn trăm năm viên mãn!",
+    "Chúc đám cưới thật trọn vẹn và ấm áp. Hạnh phúc nhé hai bạn!",
+    "Cuối cùng cũng tới ngày trọng đại, chúc mừng cặp đôi xứng lứa vừa đôi!",
+    "Chúc hai bạn mãi mãi yêu thương và bên nhau trọn đời!",
   ];
-  function wishElement(wish, sample = false) {
+  function wishElement(wish) {
     const article = document.createElement("article");
     article.className = "wish";
     const top = document.createElement("div");
     const name = document.createElement("strong");
     name.textContent = wish.name;
     const time = document.createElement("time");
-    time.textContent = sample ? "Lời chúc mẫu" : new Date(wish.date).toLocaleDateString("vi-VN", dateOptions);
-    if (!sample) time.dateTime = wish.date;
+    time.textContent = new Date(wish.date).toLocaleDateString("vi-VN", dateOptions);
+    time.dateTime = wish.date;
     const message = document.createElement("p");
     message.textContent = wish.message;
     top.append(name, time); article.append(top, message);
     return article;
   }
-  const storedWishes = readStorage(`${storageKey}-wishes`, []);
-  const wishes = Array.isArray(storedWishes) ? storedWishes.filter(w => w && typeof w.name === "string" && typeof w.message === "string" && !isNaN(Date.parse(w.date))).slice(0, 100) : [];
-  wishes.forEach(wish => $("#wishes").append(wishElement(wish)));
-  sampleWishes.forEach(([name, message]) => $("#wishes").append(wishElement({ name, message }, true)));
-  $("#wish-form").addEventListener("submit", event => {
+  function showWishesNote(text) {
+    const note = document.createElement("p");
+    note.className = "wishes-note";
+    note.textContent = text;
+    $("#wishes").replaceChildren(note);
+  }
+  // Lời chúc lưu chung trên máy chủ (api/wishes.js) nên mọi khách đều thấy.
+  async function loadWishes() {
+    try {
+      const response = await fetch("/api/wishes", { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const { wishes } = await response.json();
+      if (!wishes.length) { showWishesNote("Chưa có lời chúc nào. Hãy là người đầu tiên gửi lời chúc nhé!"); return; }
+      $("#wishes").replaceChildren(...wishes.map(wishElement));
+    } catch {
+      showWishesNote("Chưa tải được lời chúc. Bạn tải lại trang thử nhé.");
+    }
+  }
+  loadWishes();
+  $("#wish-form").addEventListener("submit", async event => {
     event.preventDefault();
+    const form = event.target;
     const name = $("#wish-name").value.trim();
     const message = $("#wish-message").value.trim();
     if (!name || !message) { toast("Bạn điền tên và lời chúc nhé."); return; }
-    const wish = { name, message, date: new Date().toISOString() };
-    wishes.unshift(wish); wishes.splice(100);
-    const saved = writeStorage(`${storageKey}-wishes`, wishes);
-    const article = wishElement(wish); article.classList.add("wish-new");
-    $("#wishes").prepend(article); $("#wishes").scrollTop = 0;
-    event.target.reset();
-    toast(saved ? "Đã lưu lời chúc trên thiết bị này. Cảm ơn bạn!" : "Lời chúc đã hiện ở bên dưới. Trình duyệt chưa cho phép lưu lại.");
+    const submit = $("button[type=submit]", form);
+    submit.disabled = true;
+    try {
+      const response = await fetch("/api/wishes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, message, website: form.elements.website.value }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) { toast(data.error || "Chưa gửi được lời chúc, bạn thử lại nhé."); return; }
+      if (data.wish) {
+        $(".wishes-note", $("#wishes"))?.remove();
+        const article = wishElement(data.wish); article.classList.add("wish-new");
+        $("#wishes").prepend(article); $("#wishes").scrollTop = 0;
+      }
+      form.reset();
+      toast("Đã gửi lời chúc. Cảm ơn bạn!");
+    } catch {
+      toast("Chưa gửi được lời chúc. Bạn kiểm tra mạng rồi thử lại nhé.");
+    } finally {
+      submit.disabled = false;
+    }
   });
   let suggestion = 0;
   $("#suggest-wish").addEventListener("click", () => {
-    $("#wish-message").value = sampleWishes[suggestion++ % sampleWishes.length][1];
+    $("#wish-message").value = wishSuggestions[suggestion++ % wishSuggestions.length];
     $("#wish-message").focus();
   });
 

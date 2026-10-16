@@ -10,6 +10,9 @@
   const musicButton = $("#music-toggle");
   const musicHint = $("#music-hint");
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  const openingDuration = 1780;
+  const openingScale = openingDuration / 1680;
+  opening.style.setProperty("--opening-scale", openingScale);
   const heartPath = "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z";
   const heartSVG = () => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${heartPath}"/></svg>`;
   let state = "closed";
@@ -191,7 +194,7 @@
         `--dy:${(Math.sin(angle) * radius * 5).toFixed(1)}px`,
         `--rot-start:${((Math.random() - .5) * 30).toFixed(1)}deg`,
         `--rot-end:${((Math.random() - .5) * 360).toFixed(1)}deg`,
-        `--delay:${(.15 * Math.random()).toFixed(3)}s`,
+        `--delay:${(.15 * openingScale * Math.random()).toFixed(3)}s`,
         `--size:${(bokeh ? 22 + 14 * Math.random() : 12 + 14 * Math.random()).toFixed(1)}px`,
         `color:${burstColors[i % burstColors.length]}`,
       ].join(";");
@@ -234,22 +237,22 @@
       opening.classList.add("is-revealing");
       setTimeout(finishOpening, 180);
     } else {
-      // Giống trang gốc: niêm vỡ + tim bắn toả + hoa góc bung ra (0s) → phong bì bay lên (~0.58s) → lộ thiệp.
+      // Slow the whole sequence by 0.1s, keeping the flowers and reveal in sync.
       createHeartBurst();
       createFlowerFly();
       opening.classList.add("is-breaking");
-      setTimeout(() => opening.classList.add("is-flying"), 576);
+      setTimeout(() => opening.classList.add("is-flying"), 576 * openingScale);
       setTimeout(() => {
         opening.classList.add("is-revealing");
         document.body.classList.add("is-entering");
-      }, 984);
+      }, 984 * openingScale);
       setTimeout(() => {
         finishOpening();
         const hero = $(".hero");
         hero.setAttribute("tabindex", "-1");
         hero.focus({ preventScroll: true });
         document.body.classList.remove("is-entering");
-      }, 1680);
+      }, openingDuration);
     }
     // Keep the normal URL unchanged, so reloading always offers the opening again.
   }
