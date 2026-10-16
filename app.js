@@ -338,7 +338,9 @@
     const message = $("#wish-message").value.trim();
     if (!name || !message) { toast("Bạn điền tên và lời chúc nhé."); return; }
     const submit = $("button[type=submit]", form);
+    const submitLabel = submit.textContent;
     submit.disabled = true;
+    submit.textContent = "Đang gửi…";
     try {
       const response = await fetch("/api/wishes", {
         method: "POST",
@@ -358,6 +360,7 @@
       toast("Chưa gửi được lời chúc. Bạn kiểm tra mạng rồi thử lại nhé.");
     } finally {
       submit.disabled = false;
+      submit.textContent = submitLabel;
     }
   });
   let suggestion = 0;
