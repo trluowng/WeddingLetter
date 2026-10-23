@@ -223,6 +223,10 @@ footer{position:relative;text-align:center;padding:0 24px 40px;font-size:14px}
 .footer-heart{display:block;margin-top:24px;font-size:24px;color:#51141988}
 
 /* Independent, accessible interaction layers. */
+/* Lấp lánh rơi nhẹ trên trang thiệp: ít, chậm, không chặn thao tác. */
+.falling-sparkles{position:fixed;inset:0;z-index:20;overflow:hidden;pointer-events:none}
+.falling-sparkle{position:absolute;top:-24px;width:var(--size);height:var(--size);opacity:0;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 5px #fff8e0) drop-shadow(0 0 9px #f3d98acc);animation:sparkle-fall var(--duration) linear var(--delay) infinite}
+.falling-sparkle::before{content:"";position:absolute;inset:0;background:currentColor;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);animation:sparkle-twinkle var(--twinkle) ease-in-out infinite alternate}
 .floating-controls{position:fixed;right:16px;bottom:24px;z-index:30;display:flex;flex-direction:column;gap:12px}
 .music-hint{position:absolute;right:52px;top:4px;width:max-content;max-width:calc(100vw - 88px);border-radius:8px;padding:7px 12px;background:var(--wine);color:var(--cream);font-size:13px;box-shadow:0 3px 10px #0002;pointer-events:none}
 .round-button{width:42px;height:42px;border:1px solid #ece4d84d;border-radius:50%;background:#511419c9;backdrop-filter:blur(8px);color:var(--cream);box-shadow:0 3px 10px #0002;display:grid;place-items:center;font-size:23px}
@@ -277,6 +281,8 @@ dialog[open]{animation:reveal-in .3s ease both}
 @keyframes envelope-away{0%{transform:translateY(0) rotate(0);opacity:1}15%{transform:translateY(10px) rotate(.5deg);opacity:1}100%{transform:translateY(-120vh) rotate(-2deg);opacity:0}}
 @keyframes flower-fly-away{0%{transform:translate(-50%,-50%) scale(var(--fly-scale-x,1),1) rotate(25deg);filter:blur(0);opacity:.78}40%{transform:translate(-50%,-50%) scale(calc(var(--fly-scale-x,1) * 1.6),1.6) rotate(25deg);filter:blur(2px);opacity:.5}100%{transform:translate(-50%,-50%) scale(calc(var(--fly-scale-x,1) * 3),3) rotate(25deg);filter:blur(10px);opacity:0}}
 @keyframes sparkle{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:.9;transform:scale(1.15)}}
+@keyframes sparkle-fall{0%{transform:translate3d(0,0,0) rotate(0);opacity:0}10%{opacity:1}85%{opacity:.85}100%{transform:translate3d(var(--drift),calc(100vh + 48px),0) rotate(160deg);opacity:0}}
+@keyframes sparkle-twinkle{from{opacity:.65;transform:scale(.8)}to{opacity:1;transform:scale(1.1)}}
 @keyframes equalizer{from{height:3px}to{height:15px}}
 @keyframes reveal-in{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 @keyframes cover-unlock{0%{transform:scale(1)}18%{transform:scale(.985)}48%{transform:translateY(-8px) scale(1.025)}100%{transform:translateY(-40px) scale(1.07)}}

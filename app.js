@@ -92,12 +92,33 @@
   }, { threshold: 0.06, rootMargin: "0px 0px -20px 0px" });
 
   // opening.js phát sự kiện này sau khi mở xong; app.js bật nội dung và hiệu ứng cuộn hiện.
+  // Lấp lánh rơi nhẹ trên trang thiệp: ít ngôi sao, rơi chậm, mỗi ngôi một nhịp riêng.
+  function startSparkles() {
+    const layer = $("#falling-sparkles");
+    if (!layer || reducedMotion.matches || layer.childElementCount) return;
+    for (let i = 0; i < 24; i++) {
+      const sparkle = document.createElement("span");
+      sparkle.className = "falling-sparkle";
+      sparkle.style.cssText = [
+        `left:${(Math.random() * 100).toFixed(1)}%`,
+        `--size:${(5 + Math.random() * 5).toFixed(1)}px`,
+        `--duration:${(12 + Math.random() * 10).toFixed(1)}s`,
+        `--delay:-${(Math.random() * 22).toFixed(1)}s`,
+        `--drift:${Math.round(Math.random() * 80 - 40)}px`,
+        `--twinkle:${(1.6 + Math.random() * 1.8).toFixed(2)}s`,
+        `color:${i % 3 ? "#f5e3a8" : "#fff6dc"}`,
+      ].join(";");
+      layer.append(sparkle);
+    }
+  }
+
   function activateInvitation() {
     if (isOpen) return;
     isOpen = true;
     document.body.classList.add("motion-ready");
     $$(".reveal").forEach(element => revealObserver.observe(element));
     startAutoScroll();
+    startSparkles();
   }
   document.addEventListener("invitation:opened", activateInvitation);
   // Khi vào bằng ?open=1, opening.js mở ngay lúc tải (trước app.js), nên kích hoạt trực tiếp.
