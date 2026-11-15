@@ -75,8 +75,8 @@ h2{font-size:20px;line-height:1.4;text-transform:uppercase;font-weight:700;lette
 .button-shine{position:absolute;top:0;left:-40%;height:100%;width:32px;background:linear-gradient(90deg,transparent,#ffffff66,transparent);animation:shine 3s ease-in-out infinite}
 
 /* Paper, flowers and illustrations are independent layers, as in the reference. */
-.wedding{position:relative;isolation:isolate;max-width:480px;width:100%;margin:auto;overflow:hidden;background:var(--paper)}
-.wedding::before{content:"";position:absolute;inset:0;z-index:-1;background:url("assets/images/paper.webp") top center/100% auto repeat-y;mix-blend-mode:multiply;opacity:.5;pointer-events:none}
+/* Vân giấy trộn ngay khi vẽ nền (rẻ hơn mix-blend-mode trên một lớp phủ cả trang); màu như cũ: 50% giấy + 50% giấy×vân. */
+.wedding{position:relative;isolation:isolate;max-width:480px;width:100%;margin:auto;overflow:hidden;background:linear-gradient(#fff7eb80,#fff7eb80),url("assets/images/paper.webp") top center/100% auto repeat-y,var(--paper);background-blend-mode:normal,multiply}
 .hero{position:relative;padding:60px 36px 56px;text-align:center;isolation:isolate}
 .castle{position:absolute;max-width:none;pointer-events:none;opacity:.1;z-index:-1;left:50%;transform:translateX(-50%)}
 .hero-castle{width:170%;top:26%}
@@ -92,8 +92,7 @@ h2{font-size:20px;line-height:1.4;text-transform:uppercase;font-weight:700;lette
 .couple-names{position:relative;display:flex;flex-direction:column;align-items:center;gap:22px;margin-top:64px;font:clamp(38px,11vw,46px)/1 var(--display)}
 .couple-names>span{position:absolute;top:37%;left:50%;transform:translate(-50%,-50%);font:92px/1 var(--script);color:#51141926;z-index:-1}
 .card-section{position:relative;width:88%;max-width:420px;margin:0 auto;z-index:1}
-.burgundy-card{position:relative;isolation:isolate;overflow:hidden;background:var(--wine);color:var(--cream);border-radius:10px;padding:36px 20px;box-shadow:4px 4px 10px #0004;text-align:center}
-.burgundy-card::before{content:"";position:absolute;inset:0;z-index:-1;background:url("assets/images/paper.webp") center/cover;mix-blend-mode:multiply;opacity:.4;pointer-events:none}
+.burgundy-card{position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(#51141999,#51141999),url("assets/images/paper.webp") center/cover,var(--wine);background-blend-mode:normal,multiply;color:var(--cream);border-radius:10px;padding:36px 20px;box-shadow:4px 4px 10px #0004;text-align:center}
 .ceremony-card{border-radius:13px;padding-bottom:40px}
 .flower{position:absolute;max-width:none;z-index:2;filter:drop-shadow(3px 4px 3px #0005);pointer-events:none;animation:float 5.5s ease-in-out .6s infinite}
 .ceremony-flower{right:-22%;bottom:30%;width:40%}
@@ -167,7 +166,7 @@ h2{font-size:20px;line-height:1.4;text-transform:uppercase;font-weight:700;lette
 .venue-castle{width:158%;top:-1%}
 .venue-section h2{font-size:18px}
 .venue-list{display:grid;grid-template-columns:1fr;gap:14px;width:min(100%,620px);margin:28px auto 0}
-.venue-card{display:flex;min-height:170px;flex-direction:column;align-items:center;justify-content:center;padding:26px 20px;border:1px solid #51141924;border-radius:12px;background:#fff7ebbf;box-shadow:0 10px 28px #5114190d;backdrop-filter:blur(2px)}
+.venue-card{display:flex;min-height:170px;flex-direction:column;align-items:center;justify-content:center;padding:26px 20px;border:1px solid #51141924;border-radius:12px;background:#fff7ebd9;box-shadow:0 10px 28px #5114190d}
 .venue-card>span{font:600 13px/1.4 "Cormorant Garamond",serif;letter-spacing:.16em;text-transform:uppercase;color:#511419a8}
 .venue-card>p{max-width:260px;margin:12px auto 18px;font-size:15px;line-height:1.55}
 .directions{display:inline-flex;align-items:center;gap:8px;color:#511419cc;font-size:14px;text-decoration:none}
@@ -224,15 +223,15 @@ footer{position:relative;text-align:center;padding:0 24px 40px;font-size:14px}
 
 /* Independent, accessible interaction layers. */
 /* Lấp lánh rơi nhẹ trên trang thiệp: ít, chậm, không chặn thao tác. */
-.falling-sparkles{position:fixed;inset:0;z-index:20;overflow:hidden;pointer-events:none}
-.falling-sparkle{position:absolute;top:-24px;width:var(--size);height:var(--size);opacity:0;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 5px #fff8e0) drop-shadow(0 0 9px #f3d98acc);animation:sparkle-fall var(--duration) linear var(--delay) infinite}
-.falling-sparkle::before{content:"";position:absolute;inset:0;background:currentColor;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);animation:sparkle-twinkle var(--twinkle) ease-in-out infinite alternate}
+.falling-sparkles{position:fixed;inset:0;z-index:20;overflow:hidden;pointer-events:none;contain:strict}
+.falling-sparkle{position:absolute;top:-56px;opacity:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3CradialGradient id='g'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='1'/%3E%3Cstop offset='.14' stop-color='%23fffaf0' stop-opacity='.78'/%3E%3Cstop offset='.34' stop-color='%23fff3d6' stop-opacity='.38'/%3E%3Cstop offset='.6' stop-color='%23f6e7bf' stop-opacity='.13'/%3E%3Cstop offset='.82' stop-color='%23f6e7bf' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='24' cy='24' r='24' fill='url(%23g)'/%3E%3Cpath d='M24 12.2 26.3 21.7 35.8 24 26.3 26.3 24 35.8 21.7 26.3 12.2 24 21.7 21.7Z' fill='%23fffaf0'/%3E%3Ccircle cx='24' cy='24' r='1.8' fill='%23fff'/%3E%3C/svg%3E") center/contain no-repeat}
+.falling-sparkle.is-warm{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3CradialGradient id='g'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='1'/%3E%3Cstop offset='.14' stop-color='%23fffaf0' stop-opacity='.78'/%3E%3Cstop offset='.34' stop-color='%23fff3d6' stop-opacity='.38'/%3E%3Cstop offset='.6' stop-color='%23f6e7bf' stop-opacity='.13'/%3E%3Cstop offset='.82' stop-color='%23f6e7bf' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='24' cy='24' r='24' fill='url(%23g)'/%3E%3Cpath d='M24 12.2 26.3 21.7 35.8 24 26.3 26.3 24 35.8 21.7 26.3 12.2 24 21.7 21.7Z' fill='%23f9edc8'/%3E%3Ccircle cx='24' cy='24' r='1.8' fill='%23fff'/%3E%3C/svg%3E")}
 .floating-controls{position:fixed;right:16px;bottom:24px;z-index:30;display:flex;flex-direction:column;gap:12px}
 .music-hint{position:absolute;right:52px;top:4px;width:max-content;max-width:calc(100vw - 88px);border-radius:8px;padding:7px 12px;background:var(--wine);color:var(--cream);font-size:13px;box-shadow:0 3px 10px #0002;pointer-events:none}
-.round-button{width:42px;height:42px;border:1px solid #ece4d84d;border-radius:50%;background:#511419c9;backdrop-filter:blur(8px);color:var(--cream);box-shadow:0 3px 10px #0002;display:grid;place-items:center;font-size:23px}
+.round-button{width:42px;height:42px;border:1px solid #ece4d84d;border-radius:50%;background:#511419e6;color:var(--cream);box-shadow:0 3px 10px #0002;display:grid;place-items:center;font-size:23px}
 .music-bars{display:flex;gap:3px;align-items:flex-end;height:15px}
-.music-bars i{height:5px;width:3px;border-radius:1px;background:currentColor}
-.music-bars i:nth-child(2){height:13px}.music-bars i:nth-child(3){height:8px}.music-bars i:nth-child(4){height:11px}
+.music-bars i{height:15px;width:3px;border-radius:1px;background:currentColor;transform-origin:bottom;transform:scaleY(.33)}
+.music-bars i:nth-child(2){transform:scaleY(.87)}.music-bars i:nth-child(3){transform:scaleY(.53)}.music-bars i:nth-child(4){transform:scaleY(.73)}
 .is-playing .music-bars i{animation:equalizer .75s ease-in-out infinite alternate}
 .is-playing .music-bars i:nth-child(2){animation-delay:-.2s}.is-playing .music-bars i:nth-child(3){animation-delay:-.5s}.is-playing .music-bars i:nth-child(4){animation-delay:-.35s}
 .toast{position:fixed;left:50%;bottom:30px;z-index:300;transform:translate(-50%,20px);opacity:0;visibility:hidden;background:var(--wine);color:var(--cream);border:1px solid #ece4d84d;box-shadow:0 6px 28px #0003;border-radius:12px;padding:13px 22px;max-width:calc(100vw - 36px);width:max-content;font-size:14px;text-align:center;transition:opacity .25s,transform .25s,visibility .25s}
@@ -281,9 +280,7 @@ dialog[open]{animation:reveal-in .3s ease both}
 @keyframes envelope-away{0%{transform:translateY(0) rotate(0);opacity:1}15%{transform:translateY(10px) rotate(.5deg);opacity:1}100%{transform:translateY(-120vh) rotate(-2deg);opacity:0}}
 @keyframes flower-fly-away{0%{transform:translate(-50%,-50%) scale(var(--fly-scale-x,1),1) rotate(25deg);filter:blur(0);opacity:.78}40%{transform:translate(-50%,-50%) scale(calc(var(--fly-scale-x,1) * 1.6),1.6) rotate(25deg);filter:blur(2px);opacity:.5}100%{transform:translate(-50%,-50%) scale(calc(var(--fly-scale-x,1) * 3),3) rotate(25deg);filter:blur(10px);opacity:0}}
 @keyframes sparkle{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:.9;transform:scale(1.15)}}
-@keyframes sparkle-fall{0%{transform:translate3d(0,0,0) rotate(0);opacity:0}10%{opacity:1}85%{opacity:.85}100%{transform:translate3d(var(--drift),calc(100vh + 48px),0) rotate(160deg);opacity:0}}
-@keyframes sparkle-twinkle{from{opacity:.65;transform:scale(.8)}to{opacity:1;transform:scale(1.1)}}
-@keyframes equalizer{from{height:3px}to{height:15px}}
+@keyframes equalizer{from{transform:scaleY(.2)}to{transform:scaleY(1)}}
 @keyframes reveal-in{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 @keyframes cover-unlock{0%{transform:scale(1)}18%{transform:scale(.985)}48%{transform:translateY(-8px) scale(1.025)}100%{transform:translateY(-40px) scale(1.07)}}
 @keyframes cover-soften{0%,100%{filter:blur(0)}35%,65%{filter:blur(.6px)}}

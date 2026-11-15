@@ -70,7 +70,9 @@
     const busy = document.hidden || $("dialog[open]") || document.activeElement?.matches("input, textarea, select");
     if (now >= autoScroll.pausedUntil && !busy && autoScroll.position < maxY - 1) {
       autoScroll.position = Math.min(maxY, autoScroll.position + autoScroll.speed * elapsed / 1000);
-      window.scrollTo({ top: autoScroll.position, behavior: "instant" });
+      // Chỉ cuộn khi vị trí đổi đủ 1px, tránh bắt trình duyệt xử lý cuộn thừa ở mọi khung hình.
+      const top = Math.round(autoScroll.position);
+      if (top !== Math.round(window.scrollY)) window.scrollTo({ top, behavior: "instant" });
     }
     requestAnimationFrame(autoScrollStep);
   }
@@ -92,23 +94,31 @@
   }, { threshold: 0.06, rootMargin: "0px 0px -20px 0px" });
 
   // opening.js phát sự kiện này sau khi mở xong; app.js bật nội dung và hiệu ứng cuộn hiện.
-  // Lấp lánh rơi nhẹ trên trang thiệp: ít ngôi sao, rơi chậm, mỗi ngôi một nhịp riêng.
+  // Lấp lánh rơi nhẹ trên trang thiệp: hạt nhỏ, rơi chậm, mỗi hạt một nhịp riêng.
+  // Chuyển động tạo bằng Web Animations với giá trị pixel cụ thể (không dùng biến CSS trong keyframe),
+  // nên trình duyệt chạy hoàn toàn trên GPU và không tranh CPU với việc cuộn trang.
+  const sparkleTwinkle = [[0, 0, .8], [.05, .95, 1.05], [.11, .55, .8], [.17, 1, 1.1], [.23, .6, .82], [.29, .95, 1.05], [.35, .55, .8], [.41, 1, 1.1], [.47, .6, .82], [.53, .95, 1.05], [.59, .55, .8], [.65, 1, 1.1], [.71, .6, .82], [.77, .9, 1.05], [.85, .7, .9], [1, 0, .8]];
   function startSparkles() {
     const layer = $("#falling-sparkles");
-    if (!layer || reducedMotion.matches || layer.childElementCount) return;
-    for (let i = 0; i < 24; i++) {
+    if (!layer || reducedMotion.matches || layer.childElementCount || !layer.animate) return;
+    // Máy yếu (ít nhân CPU hoặc ít RAM) dùng ít hạt hơn để cuộn trang vẫn mượt.
+    const lowEnd = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+    const count = lowEnd ? 14 : 24;
+    const fall = innerHeight + 112;
+    for (let i = 0; i < count; i++) {
       const sparkle = document.createElement("span");
-      sparkle.className = "falling-sparkle";
-      sparkle.style.cssText = [
-        `left:${(Math.random() * 100).toFixed(1)}%`,
-        `--size:${(5 + Math.random() * 5).toFixed(1)}px`,
-        `--duration:${(12 + Math.random() * 10).toFixed(1)}s`,
-        `--delay:-${(Math.random() * 22).toFixed(1)}s`,
-        `--drift:${Math.round(Math.random() * 80 - 40)}px`,
-        `--twinkle:${(1.6 + Math.random() * 1.8).toFixed(2)}s`,
-        `color:${i % 3 ? "#f5e3a8" : "#fff6dc"}`,
-      ].join(";");
+      sparkle.className = i % 3 ? "falling-sparkle is-warm" : "falling-sparkle";
+      // Khung rộng gấp 2,8 lần ngôi sao để chứa quầng sáng.
+      const size = 2.8 * (5 + Math.random() * 5);
+      sparkle.style.cssText = `left:${(Math.random() * 100).toFixed(1)}%;width:${size.toFixed(1)}px;height:${size.toFixed(1)}px;margin-left:${(-size / 2).toFixed(1)}px`;
       layer.append(sparkle);
+      const drift = Math.random() * 80 - 40;
+      const duration = (12 + Math.random() * 10) * 1000;
+      sparkle.animate(sparkleTwinkle.map(([at, opacity, scale]) => ({
+        offset: at,
+        opacity,
+        transform: `translate3d(${(drift * at).toFixed(1)}px, ${(fall * at).toFixed(1)}px, 0) rotate(${Math.round(160 * at)}deg) scale(${scale})`,
+      })), { duration, iterations: Infinity, delay: -Math.random() * duration });
     }
   }
 
@@ -427,5 +437,9 @@
     });
   }
   $("#back-top").addEventListener("click", () => window.scrollTo({ top: 0, behavior: reducedMotion.matches ? "instant" : "smooth" }));
-  window.addEventListener("scroll", () => { $("#back-top").hidden = window.scrollY < 600; }, { passive: true });
+  const backTop = $("#back-top");
+  window.addEventListener("scroll", () => {
+    const hide = window.scrollY < 600;
+    if (backTop.hidden !== hide) backTop.hidden = hide;
+  }, { passive: true });
 })();
