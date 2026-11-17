@@ -8,10 +8,10 @@
   <title>Trọng Dũng & Thu Cúc — Thiệp cưới</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/ViaodaLibre-Regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=glow-1">
+  <link rel="stylesheet" href="styles.css?v=sides-1">
   <script src="config.js" defer></script>
   <script src="opening.js?v=opening-2" defer></script>
-  <script src="app.js?v=glow-1" defer></script>
+  <script src="app.js?v=sides-1" defer></script>
 </head>
 <body class="is-closed">
   <div class="opening" id="opening">
@@ -56,17 +56,17 @@
       <div class="burgundy-card ceremony-card">
         <h2 id="ceremony-title">Thông tin lễ cưới</h2>
         <div class="families">
-          <div><span>Ông Bà</span><strong data-text="groomFather"></strong><strong data-text="groomMother"></strong><small data-text="groomAddress">Quận 1, TP. Hồ Chí Minh</small></div>
+          <div class="family-groom"><span>Ông Bà</span><strong data-text="groomFather"></strong><strong data-text="groomMother"></strong><small data-text="groomAddress">Quận 1, TP. Hồ Chí Minh</small></div>
           <i aria-hidden="true"></i>
-          <div><span>Ông Bà</span><strong data-text="brideFather"></strong><strong data-text="brideMother"></strong><small data-text="brideAddress">Quận 3, TP. Hồ Chí Minh</small></div>
+          <div class="family-bride"><span>Ông Bà</span><strong data-text="brideFather"></strong><strong data-text="brideMother"></strong><small data-text="brideAddress">Quận 3, TP. Hồ Chí Minh</small></div>
         </div>
-        <p class="announcement">Trân trọng báo tin<br>Lễ thành hôn của chúng tôi</p>
+        <p class="announcement">Trân trọng báo tin<br><span data-text="ceremonyName">Lễ thành hôn</span> của chúng tôi</p>
         <div class="formal-names">
           <h3 data-text="groomFull">Nguyễn Trọng Dũng</h3><span class="formal-ampersand">&</span>
           <h3 data-text="brideFull">Trần Thị Thu Cúc</h3>
         </div>
         <div class="ceremony-details">
-          <p class="ceremony-place">Lễ thành hôn được cử hành tại<br>Tư gia</p>
+          <p class="ceremony-place"><span data-text="ceremonyName">Lễ thành hôn</span> được cử hành tại<br><span data-text="ceremonyPlace">Tư gia</span></p>
           <div class="time-line"><span>Vào lúc <span data-text="ceremonyTime"></span></span><span data-date="weekday">Thứ </span></div>
           <div class="date-display"><span class="date-day" data-date="day"></span><div><span data-date="month">Tháng </span><span data-date="year">2026</span></div></div>
           <p class="lunar-date">(<span data-text="lunarDate">Tức ngày </span>)</p>
@@ -113,12 +113,12 @@
       <img class="castle venue-castle" src="assets/images/castle-background.webp" alt="" loading="lazy">
       <h2 id="venue-title">Tiệc cưới sẽ tổ chức tại</h2>
       <div class="venue-list">
-        <article class="venue-card">
+        <article class="venue-card" data-venue="groom">
           <span>Nhà trai</span>
           <p data-text="groomVenue">Địa chỉ tiệc cưới nhà trai</p>
           <a class="directions" data-map-address="groomVenue" data-map-label="Nhà trai" href="#" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m3 11 19-9-9 19-2-8-8-2Z"/></svg>Chỉ đường</a>
         </article>
-        <article class="venue-card">
+        <article class="venue-card" data-venue="bride">
           <span>Nhà gái</span>
           <p data-text="brideVenue">Địa chỉ tiệc cưới nhà gái</p>
           <a class="directions" data-map-address="brideVenue" data-map-label="Nhà gái" href="#" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m3 11 19-9-9 19-2-8-8-2Z"/></svg>Chỉ đường</a>

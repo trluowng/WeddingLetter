@@ -1,0 +1,7 @@
+{
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/nha-trai", "destination": "/index.html" },
+    { "source": "/nha-gai", "destination": "/index.html" }
+  ]
+}

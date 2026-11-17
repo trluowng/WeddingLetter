@@ -1,7 +1,14 @@
 (() => {
   "use strict";
 
-  const config = window.WEDDING_CONFIG;
+  // Một trang cho ba link: "/" là thiệp chung, "/nha-trai" và "/nha-gai" lấy thêm thông tin riêng trong config.sides.
+  // Mở file trực tiếp (không qua máy chủ) thì thử bằng ?side=nha-trai hoặc ?side=nha-gai.
+  const baseConfig = window.WEDDING_CONFIG;
+  const sides = baseConfig.sides || {};
+  const sideKey = [location.pathname.replace(/\/+$/, "").split("/").pop(), new URLSearchParams(location.search).get("side")]
+    .find(key => key && Object.hasOwn(sides, key));
+  const config = sideKey ? { ...baseConfig, ...sides[sideKey] } : baseConfig;
+  if (config.family) document.body.classList.add(config.family === "bride" ? "side-bride" : "side-groom");
   const $ = (selector, parent = document) => parent.querySelector(selector);
   const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -48,9 +55,12 @@
     year: String(dateParts[0]),
   } : { long: "Ngày cưới sẽ thông báo sau", weekday: "Sẽ thông báo", day: "—", month: "—", year: "—" };
   $$("[data-date]").forEach(element => { element.textContent = formattedDates[element.dataset.date]; });
-  document.title = `${config.groom} & ${config.bride} — Thiệp cưới`;
+  const coupleTitle = config.family === "bride" ? `${config.bride} & ${config.groom}` : `${config.groom} & ${config.bride}`;
+  document.title = `${coupleTitle} — Thiệp cưới`;
   const params = new URLSearchParams(location.search);
   $("#guest-name").textContent = (params.get("guest") || "").slice(0, 100);
+  // Thiệp của một bên chỉ hiện địa chỉ tiệc của bên đó.
+  if (config.family) $$("[data-venue]").forEach(card => { card.hidden = card.dataset.venue !== config.family; });
   $$('[data-map-address]').forEach(link => {
     const address = String(config[link.dataset.mapAddress] || "").trim();
     link.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
@@ -310,8 +320,8 @@
     if (!weddingDate) return;
     const formatDate = date => date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
     const escape = value => value.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/[,;]/g, "\\$&");
-    const venues = [config.groomVenue, config.brideVenue].filter(Boolean).join(" / ");
-    const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//WeddingLetter//VI", "BEGIN:VEVENT", `UID:${config.date}-wedding@weddingletter.local`, `DTSTAMP:${formatDate(new Date())}`, `DTSTART:${formatDate(weddingDate)}`, `DTEND:${formatDate(new Date(weddingDate.getTime() + 3 * 3600000))}`, `SUMMARY:${escape(`Đám cưới ${config.groom} & ${config.bride}`)}`, `LOCATION:${escape(venues)}`, "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+    const venues = config.family ? config[`${config.family}Venue`] || "" : [config.groomVenue, config.brideVenue].filter(Boolean).join(" / ");
+    const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//WeddingLetter//VI", "BEGIN:VEVENT", `UID:${config.date}-${sideKey || "wedding"}@weddingletter.local`, `DTSTAMP:${formatDate(new Date())}`, `DTSTART:${formatDate(weddingDate)}`, `DTEND:${formatDate(new Date(weddingDate.getTime() + 3 * 3600000))}`, `SUMMARY:${escape(`${sideKey ? `${config.ceremonyName} ` : "Đám cưới "}${coupleTitle}`)}`, `LOCATION:${escape(venues)}`, "END:VEVENT", "END:VCALENDAR"].join("\r\n");
     const url = URL.createObjectURL(new Blob([ics], { type: "text/calendar;charset=utf-8" }));
     const link = document.createElement("a");
     link.href = url; link.download = "lich-cuoi.ics"; link.click();
