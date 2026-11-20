@@ -172,10 +172,6 @@ h2{font-size:20px;line-height:1.4;text-transform:uppercase;font-weight:700;lette
 .directions{display:inline-flex;align-items:center;gap:8px;color:#511419cc;font-size:14px;text-decoration:none}
 .directions:hover{text-decoration:underline}
 .directions svg{width:16px;height:16px}
-/* Link riêng từng bên: thiệp nhà gái xếp cô dâu và họ nhà gái lên trước; thiệp một bên chỉ còn một thẻ địa điểm. */
-.side-bride :is(.cover-content h1,.couple-names,.formal-names) [data-text^="bride"],.side-bride .family-bride{order:-1}
-.side-bride :is(.cover-content h1,.couple-names,.formal-names) [data-text^="groom"],.side-bride .family-groom{order:1}
-.side-groom .venue-list,.side-bride .venue-list{grid-template-columns:1fr;max-width:380px}
 .timeline-section{margin-top:16px;margin-bottom:16px}
 .timeline-flower{right:-16%;top:-12%;width:30%;animation-duration:5.2s;animation-delay:.9s}
 .timeline-card{padding:36px 32px}

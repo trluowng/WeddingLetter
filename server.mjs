@@ -18,10 +18,7 @@ http.createServer(async (request, response) => {
     const pathname = decodeURIComponent(new URL(request.url, "http://localhost").pathname);
     if (pathname === "/api/wishes") { await wishesApi(request, response); return; }
     if (!["GET", "HEAD"].includes(request.method)) { response.writeHead(405).end(); return; }
-    // Giống vercel.json: link riêng từng bên dùng chung index.html; bỏ dấu "/" thừa ở cuối.
-    const sidePage = pathname.match(/^\/(nha-trai|nha-gai)(\/?)$/);
-    if (sidePage?.[2]) { response.writeHead(308, { Location: `/${sidePage[1]}${new URL(request.url, "http://localhost").search}` }).end(); return; }
-    const file = path.resolve(root, `.${pathname === "/" || sidePage ? "/index.html" : pathname}`);
+    const file = path.resolve(root, `.${pathname === "/" ? "/index.html" : pathname}`);
     const relative = path.relative(root, file);
     if (relative.startsWith("..") || path.isAbsolute(relative) || relative.split(/[\\/]/).some(segment => segment.startsWith(".")) || /^(data|api)([\\/]|$)/.test(relative)) { response.writeHead(403).end(); return; }
     const info = await stat(file);
